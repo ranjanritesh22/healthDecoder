@@ -18,29 +18,34 @@ every file and every function in the project.
 
 ## Table of contents
 
-**Part A — Concepts (read this if AI/serverless is new to you)**
-1. [The big picture in plain words](#big-picture)
-2. [Key concepts & vocabulary (AI wrapper, serverless, base64, …)](#vocabulary)
+### Part A — Concepts
+*Read this if AI / serverless is new to you.*
 
-**Part B — The app, end to end**
-3. [The complete request flow (click-by-click, function-by-function)](#flow)
-4. [Tech stack & why each piece exists](#tech-stack)
-5. [Project structure — every file explained](#project-structure)
+- **1.** [The big picture in plain words](#big-picture)
+- **2.** [Key concepts & vocabulary (AI wrapper, serverless, base64, …)](#vocabulary)
 
-**Part C — The two hard parts, explained slowly**
-6. [AI integration deep dive (how we talk to Gemini & Claude)](#ai-integration)
-7. [PDF generation deep dive (how the download is built)](#pdf-deep-dive)
+### Part B — The app, end to end
 
-**Part D — Reference**
-8. [Function-by-function reference (every function in the codebase)](#function-reference)
-9. [Swapping / adding AI providers](#swapping-providers)
-10. [Running locally (Wrangler explained)](#running-locally)
-11. [Deploying to Cloudflare Pages + custom domain](#deploying)
-12. [How to add a new feature (worked examples)](#extending)
-13. [Design system & conventions](#design-system)
-14. [Safety & medical disclaimer policy](#safety)
-15. [Troubleshooting](#troubleshooting)
-16. [Glossary (quick definitions)](#glossary)
+- **3.** [The complete request flow (click-by-click, function-by-function)](#flow)
+- **4.** [Tech stack & why each piece exists](#tech-stack)
+- **5.** [Project structure — every file explained](#project-structure)
+
+### Part C — The two hard parts, explained slowly
+
+- **6.** [AI integration deep dive (how we talk to Gemini & Claude)](#ai-integration)
+- **7.** [PDF generation deep dive (how the download is built)](#pdf-deep-dive)
+
+### Part D — Reference
+
+- **8.** [Function-by-function reference (every function in the codebase)](#function-reference)
+- **9.** [Swapping / adding AI providers](#swapping-providers)
+- **10.** [Running locally (Wrangler explained)](#running-locally)
+- **11.** [Deploying to Cloudflare Pages + custom domain](#deploying)
+- **12.** [How to add a new feature (worked examples)](#extending)
+- **13.** [Design system & conventions](#design-system)
+- **14.** [Safety & medical disclaimer policy](#safety)
+- **15.** [Troubleshooting](#troubleshooting)
+- **16.** [Glossary (quick definitions)](#glossary)
 
 ---
 
