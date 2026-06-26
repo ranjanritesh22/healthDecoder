@@ -54,11 +54,32 @@ function StatusBanner({ report }: { report: MedicalReport }) {
   );
 }
 
-/** A titled section wrapper with consistent spacing + heading style. */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+/**
+ * A titled section wrapper with consistent spacing + heading style.
+ *
+ * `pdf` controls how the PDF paginator (src/lib/pdf.ts) treats this section:
+ *  - 'atomic' (default): the whole section is ONE block and is never split — use
+ *    for short sections (summary, lifestyle, disclaimer-like blocks).
+ *  - 'split': the heading is its own block that "keeps with" the first item, and
+ *    the CHILDREN mark their own blocks — use for long lists (findings) so pages
+ *    can break BETWEEN cards but never orphan the heading.
+ *  - 'none': no PDF markers here (the parent wraps this in a block itself).
+ */
+function Section({
+  title,
+  children,
+  pdf = 'atomic',
+}: {
+  title: string;
+  children: React.ReactNode;
+  pdf?: 'atomic' | 'split' | 'none';
+}) {
   return (
-    <section className="mt-7">
-      <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-slate-800">
+    <section className="mt-7" {...(pdf === 'atomic' ? { 'data-pdf-block': '' } : {})}>
+      <h3
+        className="mb-3 flex items-center gap-2 text-base font-bold text-slate-800"
+        {...(pdf === 'split' ? { 'data-pdf-block': '', 'data-pdf-keep': 'next' } : {})}
+      >
         <span className="h-4 w-1.5 rounded-full bg-brand-600" />
         {title}
       </h3>
@@ -71,7 +92,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function FindingRow({ f, lang }: { f: Finding; lang: MedicalReport['language'] }) {
   const st = statusStyle(f.status, lang);
   return (
-    <div className={`rounded-xl ${st.bg} p-4`}>
+    <div className={`rounded-xl ${st.bg} p-4`} data-pdf-block>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <span className="font-semibold text-slate-800">{f.parameter}</span>
         <span className="flex items-center gap-1.5 text-sm font-semibold">
@@ -117,7 +138,7 @@ const ReportView = forwardRef<HTMLDivElement, Props>(({ report }, ref) => {
       className={`mx-auto w-full max-w-3xl bg-white p-6 sm:p-9 ${report.language === 'hi' ? 'lang-hi' : ''}`}
     >
       {/* ---- Header / branding ------------------------------------------- */}
-      <header className="flex items-center justify-between border-b border-slate-100 pb-5">
+      <header className="flex items-center justify-between border-b border-slate-100 pb-5" data-pdf-block>
         <div className="flex items-center gap-2.5">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-700 text-white">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -134,7 +155,7 @@ const ReportView = forwardRef<HTMLDivElement, Props>(({ report }, ref) => {
 
       {/* ---- Patient info (only render fields that exist) ----------------- */}
       {(patient.name || patient.age || patient.sex || patient.referredBy) && (
-        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600">
+        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600" data-pdf-block>
           {patient.name && <span><span className="text-slate-400">Name:</span> <strong className="text-slate-800">{patient.name}</strong></span>}
           {patient.age && <span><span className="text-slate-400">Age:</span> <strong className="text-slate-800">{patient.age}</strong></span>}
           {patient.sex && <span><span className="text-slate-400">Sex:</span> <strong className="text-slate-800">{patient.sex}</strong></span>}
@@ -152,7 +173,7 @@ const ReportView = forwardRef<HTMLDivElement, Props>(({ report }, ref) => {
 
       {/* ---- Important findings (highlighted first) ---------------------- */}
       {report.importantFindings.length > 0 && (
-        <Section title={s.importantFindings}>
+        <Section title={s.importantFindings} pdf="split">
           <div className="space-y-2.5">
             {report.importantFindings.map((f, i) => (
               <FindingRow key={i} f={f} lang={report.language} />
@@ -163,7 +184,7 @@ const ReportView = forwardRef<HTMLDivElement, Props>(({ report }, ref) => {
 
       {/* ---- Every parameter explained ----------------------------------- */}
       {report.allFindings.length > 0 && (
-        <Section title={s.allParameters}>
+        <Section title={s.allParameters} pdf="split">
           <div className="space-y-2.5">
             {report.allFindings.map((f, i) => (
               <FindingRow key={i} f={f} lang={report.language} />
@@ -173,11 +194,12 @@ const ReportView = forwardRef<HTMLDivElement, Props>(({ report }, ref) => {
       )}
 
       {/* ---- Food recommendations + foods to limit (two columns on wide) -- */}
-      <div className="grid gap-x-8 sm:grid-cols-2">
-        <Section title={s.foodRecommendations}>
+      {/* Two columns share a vertical band, so keep them as ONE pdf block. */}
+      <div className="grid gap-x-8 sm:grid-cols-2" data-pdf-block>
+        <Section title={s.foodRecommendations} pdf="none">
           <BulletList items={report.foodRecommendations} accent="bg-status-normal" />
         </Section>
-        <Section title={s.foodsToLimit}>
+        <Section title={s.foodsToLimit} pdf="none">
           <BulletList items={report.foodsToLimit} accent="bg-status-high" />
         </Section>
       </div>
@@ -202,12 +224,12 @@ const ReportView = forwardRef<HTMLDivElement, Props>(({ report }, ref) => {
       )}
 
       {/* ---- Disclaimer (always shown) ----------------------------------- */}
-      <div className="mt-8 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100">
+      <div className="mt-8 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100" data-pdf-block>
         <p className="text-xs font-semibold text-slate-500">{s.disclaimer}</p>
         <p className="mt-1 text-xs leading-relaxed text-slate-500">{report.disclaimer}</p>
       </div>
 
-      <p className="mt-5 text-center text-[11px] text-slate-300">
+      <p className="mt-5 text-center text-[11px] text-slate-300" data-pdf-block>
         Generated by HealthDecode · healthdecode.frontendrealm.com
       </p>
     </div>
