@@ -1,0 +1,39 @@
+<!doctype html>
+<!--
+  index.html — the single HTML entry point for the SPA.
+  Vite injects the bundled script. Keep this minimal; everything visual is React.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Mobile-first: this viewport tag is what makes the responsive layout work. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="HealthDecode — understand your medical lab report in plain English or Hindi. Upload a PDF, get a clear explained report in under a minute."
+    />
+    <meta name="theme-color" content="#0f766e" />
+    <title>HealthDecode — Understand Your Medical Report</title>
+
+    <!--
+      Fonts loaded from Google Fonts:
+      - "Inter"            -> clean Latin UI typography (premium, highly legible).
+      - "Noto Sans Devanagari" -> CORRECT Hindi rendering. The browser shapes the
+        Devanagari conjuncts/matras; we later screenshot this DOM into the PDF, so
+        loading the font here is what makes Hindi look right in the downloaded PDF.
+      `display=swap` avoids blocking first paint (keeps the app feeling fast).
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- React mounts here (see src/main.tsx). -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

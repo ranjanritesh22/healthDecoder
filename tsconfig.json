@@ -1,0 +1,11 @@
+{
+  // Root TypeScript "solution" config. It does not compile files itself; it
+  // points at the two real configs below. `tsc -b` builds them in order.
+  // Splitting app code (DOM/browser) from build-tool code (Node) lets each use
+  // the correct lib + module settings without leaking types into the other.
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}

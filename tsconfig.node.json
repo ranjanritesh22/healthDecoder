@@ -1,0 +1,15 @@
+{
+  // TypeScript config for build-tooling files that run in Node (not the browser),
+  // e.g. vite.config.ts. Kept separate so Node globals don't pollute app code.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": ["vite.config.ts"]
+}

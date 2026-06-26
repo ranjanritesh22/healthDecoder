@@ -1,0 +1,68 @@
+/* =============================================================================
+   index.css — global styles + Tailwind v4 setup
+   -----------------------------------------------------------------------------
+   In Tailwind v4 we import the framework with a single line and configure the
+   design tokens (colors, fonts) right here inside `@theme`. There is no
+   tailwind.config.js. This keeps all design decisions in ONE readable place.
+   ========================================================================== */
+
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens. Anything defined here becomes a Tailwind utility:
+   e.g. `--color-brand-600` -> usable as `bg-brand-600`, `text-brand-600`, etc.
+   The palette is a calm medical teal + warm neutrals = "premium & reassuring".
+   --------------------------------------------------------------------------- */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* Used by the report when language = Hindi so Devanagari shapes correctly. */
+  --font-hindi: 'Noto Sans Devanagari', 'Inter', sans-serif;
+
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+
+  /* Semantic status colors for lab findings (normal / high / low / watch). */
+  --color-status-normal: #16a34a;
+  --color-status-high: #dc2626;
+  --color-status-low: #2563eb;
+  --color-status-watch: #d97706;
+}
+
+/* ---------------------------------------------------------------------------
+   Base layer tweaks. Mobile-first, generous, premium defaults.
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-sans);
+    /* Soft gradient backdrop = premium feel without heavy images. */
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #ccfbf1 0%, transparent 60%),
+      #f8fafc;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   A reusable utility: when the report is rendered in Hindi, we add the
+   `lang-hi` class so the whole report switches to the Devanagari font.
+   --------------------------------------------------------------------------- */
+.lang-hi {
+  font-family: var(--font-hindi);
+}
+
+/* Thin, subtle scrollbar — small polish that reads as "premium". */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #99f6e4 transparent;
+}

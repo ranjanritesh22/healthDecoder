@@ -1,0 +1,15 @@
+# public/_headers
+# -----------------------------------------------------------------------------
+# Cloudflare Pages reads this file to attach HTTP headers to responses.
+# These are sensible security + caching defaults for a static SPA.
+# -----------------------------------------------------------------------------
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Hashed build assets are immutable — cache them aggressively for speed.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

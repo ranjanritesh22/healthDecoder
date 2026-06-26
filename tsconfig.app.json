@@ -1,0 +1,30 @@
+{
+  // TypeScript config for the BROWSER app (everything in /src and /functions).
+  // We include /functions too so the Cloudflare Function is type-checked with
+  // the same strictness as the UI.
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+
+    // Strictness — catches whole classes of bugs at compile time. Worth it.
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // We never emit from this config; Vite (esbuild) does the actual transpile.
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+
+    // Cloudflare Functions run on the Workers runtime which provides Web APIs
+    // (fetch, Request, Response) globally — already covered by the DOM lib.
+    "types": []
+  },
+  "include": ["src", "functions"]
+}

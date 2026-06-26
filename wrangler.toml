@@ -1,0 +1,16 @@
+# wrangler.toml
+# -----------------------------------------------------------------------------
+# Configuration for the Cloudflare Pages project (used by `wrangler pages ...`).
+# This tells Cloudflare how to build/serve the site AND run the /functions code.
+# Secrets (GEMINI_API_KEY etc.) are NOT put here — set them in the Cloudflare
+# dashboard (production) or in a local `.dev.vars` file (development).
+# -----------------------------------------------------------------------------
+
+name = "healthdecode"
+pages_build_output_dir = "dist"
+
+# Cloudflare Workers runtime feature date. Pin it so behavior is reproducible.
+compatibility_date = "2024-11-01"
+
+# Enables Node.js-style APIs in the Functions runtime when needed.
+compatibility_flags = ["nodejs_compat"]

@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.wrangler/
+*.tsbuildinfo
+
+# Secrets — NEVER commit real API keys. Use Cloudflare env vars in production
+# and a local .dev.vars file (also ignored) for local `wrangler pages dev`.
+.env
+.env.local
+.dev.vars
+
+# Logs / OS noise
+*.log
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
