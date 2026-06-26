@@ -195,46 +195,98 @@ string matching `reportSchema`.** The rest of the app is provider-agnostic.
 ---
 
 <a name="running-locally"></a>
-## 6. Running locally
+## 6. Running locally (manual testing)
 
-### Prerequisites
-- Node.js 18+ and npm.
+> **Why two modes?** The AI call runs inside a **Cloudflare Function**, which the
+> plain Vite dev server does not execute. So:
+> - **UI-only changes** (styling, layout) → use the fast Vite server (Mode B).
+> - **Testing the real upload → AI → report → PDF flow** → use Wrangler (Mode A).
 
-### Install
+### Step 0 — Prerequisites
+- Node.js 18+ and npm installed.
+
+### Step-by-step: full manual test (upload a real PDF, get a real report)
+
+This is the path to actually try the app the way a user would.
+
+**1. Install dependencies (first time only):**
 ```bash
 npm install
 ```
 
-### Set your AI key for local dev
-The Functions read secrets from a local `.dev.vars` file (already git-ignored):
+**2. Add your AI key for local dev.** The Functions read secrets from a
+git-ignored `.dev.vars` file. Create it (a template `.dev.vars` may already
+exist — just edit the key):
 ```bash
-cp .env.example .dev.vars
-# then edit .dev.vars and paste your GEMINI_API_KEY
+cp .env.example .dev.vars         # if .dev.vars doesn't exist yet
+```
+Open `.dev.vars` and set your free Gemini key
+(get one at <https://aistudio.google.com/apikey>):
+```
+AI_PROVIDER=gemini
+GEMINI_API_KEY=AIza...your-real-key...
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
-### Two ways to run
-
-**A) Full app (frontend + the /api Function)** — recommended, mirrors production:
+**3. Build + start the full local stack (frontend + the `/api` Function):**
 ```bash
 npm run pages:dev
 ```
-This runs `wrangler pages dev`, which serves the built site *and* the Function so
-`/api/analyze` actually works end-to-end. (Run `npm run build` first if needed.)
-
-**B) Frontend only (fast UI iteration):**
-```bash
-npm run dev
+This runs `npm run build` then `wrangler pages dev dist`. When it's ready it
+prints a local URL, usually:
 ```
-Vite serves the UI at <http://localhost:5173> and proxies `/api` to a separately
-running `wrangler pages dev` on port 8788. If you're only tweaking styling, this
-is the fastest loop; the AI call will only succeed when a Function host is up.
+[wrangler] Ready on http://localhost:8788
+```
 
-### Other scripts
+**4. Open it in your browser:** <http://localhost:8788>
+
+**5. Test the flow manually:**
+   1. Pick a language (English / हिन्दी).
+   2. Upload a medical lab report PDF (a scanned PDF works too). Don't have one?
+      Any real blood-test / lab report PDF works; you can also export a sample
+      lab report to PDF.
+   3. Click **Generate my report** → you should see the loading animation, then
+      the explained, color-coded report.
+   4. Click **Download PDF** → confirm the downloaded PDF looks right (check
+      Hindi renders correctly if you chose हिन्दी).
+
+> ⚠️ `npm run pages:dev` rebuilds first, so after changing code, **stop it
+> (Ctrl+C) and run it again** to see your change. For rapid UI work use Mode B.
+
+### Mode B — fast UI-only loop (no real AI)
+For pure styling/layout iteration with hot reload:
 ```bash
+npm run dev      # Vite at http://localhost:5173
+```
+The UI loads instantly and hot-reloads, but the **AI call will fail** here unless
+you also run `wrangler pages dev dist --port 8788` in a second terminal (Vite
+proxies `/api` → port 8788, configured in `vite.config.ts`). If you only need to
+see layout/styling, ignore the upload error.
+
+### Quick endpoint smoke test (no browser)
+Confirm the Function is alive without uploading anything:
+```bash
+curl -X POST http://localhost:8788/api/analyze \
+  -H "Content-Type: application/json" -d '{}'
+# Expected: {"ok":false,"error":"No PDF was provided."}  → the Function is wired up.
+```
+
+### All scripts
+```bash
+npm run dev         # Vite UI-only dev server (hot reload, no Functions)
+npm run pages:dev   # build + full local stack incl. /api Function  ← manual testing
 npm run build       # typecheck + production build into dist/
-npm run preview     # preview the production build
+npm run preview     # preview the production build (static only)
 npm run typecheck   # types only, no emit
 ```
+
+### Common local-testing gotchas
+| Problem | Fix |
+| --- | --- |
+| `Server is missing GEMINI_API_KEY` | You skipped step 2, or left the placeholder. Put a real key in `.dev.vars` and restart `npm run pages:dev`. |
+| `/api/analyze` returns 404 | You're on `npm run dev` (Vite only). Use `npm run pages:dev` for the AI flow. |
+| Changed code but nothing changed | `pages:dev` serves a build. Stop (Ctrl+C) and rerun it. |
+| `Gemini API error (429)` | Free-tier rate limit. Wait a bit and retry. |
 
 ---
 
